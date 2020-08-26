@@ -1,0 +1,1796 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+- phpMyAdmin XML Dump
+- version 5.0.2
+- https://www.phpmyadmin.net
+-
+- Host: localhost
+- Generation Time: Aug 26, 2020 at 09:50 PM
+- Server version: 10.4.14-MariaDB
+- PHP Version: 7.4.9
+-->
+
+<pma_xml_export version="1.0" xmlns:pma="https://www.phpmyadmin.net/some_doc_url/">
+    <!--
+    - Structure schemas
+    -->
+    <pma:structure_schemas>
+        <pma:database name="hanapyesa" collation="utf8mb4_general_ci" charset="utf8mb4">
+            <pma:table name="bidders">
+                CREATE TABLE `bidders` (
+                  `id` int(11) NOT NULL AUTO_INCREMENT,
+                  `bidItemId` int(11) NOT NULL,
+                  `accountId` int(11) NOT NULL,
+                  `suggestedItemId` int(11) DEFAULT NULL,
+                  `requestStatus` int(11) NOT NULL,
+                  PRIMARY KEY (`id`),
+                  KEY `bidsectionId` (`bidItemId`),
+                  KEY `accountId` (`accountId`),
+                  KEY `bidders_ibfk_4` (`suggestedItemId`),
+                  KEY `requestStatus` (`requestStatus`),
+                  CONSTRAINT `bidders_ibfk_2` FOREIGN KEY (`bidItemId`) REFERENCES `bid_item` (`id`),
+                  CONSTRAINT `bidders_ibfk_3` FOREIGN KEY (`accountId`) REFERENCES `user_account` (`id`),
+                  CONSTRAINT `bidders_ibfk_4` FOREIGN KEY (`suggestedItemId`) REFERENCES `bid_item_detail` (`id`),
+                  CONSTRAINT `bidders_ibfk_5` FOREIGN KEY (`requestStatus`) REFERENCES `statustype` (`id`)
+                ) ENGINE=InnoDB AUTO_INCREMENT=24 DEFAULT CHARSET=latin1;
+            </pma:table>
+            <pma:table name="bid_chat_area">
+                CREATE TABLE `bid_chat_area` (
+                  `id` int(11) NOT NULL AUTO_INCREMENT,
+                  `bidItemId` int(11) NOT NULL,
+                  `recieverId` int(11) NOT NULL,
+                  `senderId` int(11) NOT NULL,
+                  `message` varchar(255) NOT NULL,
+                  `datetime` datetime NOT NULL,
+                  `messageType` int(11) NOT NULL,
+                  `status` int(11) NOT NULL,
+                  PRIMARY KEY (`id`),
+                  KEY `status` (`status`),
+                  KEY `bidItemId` (`bidItemId`),
+                  KEY `bid_chat_area_ibfk_5` (`messageType`),
+                  KEY `bid_chat_area_ibfk_2` (`recieverId`),
+                  KEY `senderId` (`senderId`),
+                  CONSTRAINT `bid_chat_area_ibfk_2` FOREIGN KEY (`recieverId`) REFERENCES `user_account` (`id`),
+                  CONSTRAINT `bid_chat_area_ibfk_3` FOREIGN KEY (`status`) REFERENCES `statustype` (`id`),
+                  CONSTRAINT `bid_chat_area_ibfk_4` FOREIGN KEY (`bidItemId`) REFERENCES `bid_item` (`id`),
+                  CONSTRAINT `bid_chat_area_ibfk_5` FOREIGN KEY (`messageType`) REFERENCES `messagetype` (`id`),
+                  CONSTRAINT `bid_chat_area_ibfk_6` FOREIGN KEY (`senderId`) REFERENCES `user_account` (`id`)
+                ) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=latin1;
+            </pma:table>
+            <pma:table name="bid_item">
+                CREATE TABLE `bid_item` (
+                  `id` int(11) NOT NULL AUTO_INCREMENT,
+                  `bidItem` int(11) NOT NULL,
+                  `datetime` date NOT NULL,
+                  `sendLocation` int(11) NOT NULL,
+                  PRIMARY KEY (`id`),
+                  KEY `sendLoction` (`sendLocation`),
+                  KEY `bidItem` (`bidItem`),
+                  CONSTRAINT `bid_item_ibfk_3` FOREIGN KEY (`sendLocation`) REFERENCES `zip_code` (`id`),
+                  CONSTRAINT `bid_item_ibfk_4` FOREIGN KEY (`bidItem`) REFERENCES `bid_item_detail` (`id`)
+                ) ENGINE=InnoDB AUTO_INCREMENT=26 DEFAULT CHARSET=latin1;
+            </pma:table>
+            <pma:table name="bid_item_detail">
+                CREATE TABLE `bid_item_detail` (
+                  `id` int(11) NOT NULL AUTO_INCREMENT,
+                  `itemName` varchar(255) NOT NULL,
+                  `itemPriceorBudget` varchar(255) NOT NULL,
+                  `description` varchar(255) NOT NULL,
+                  PRIMARY KEY (`id`)
+                ) ENGINE=InnoDB AUTO_INCREMENT=33 DEFAULT CHARSET=latin1;
+            </pma:table>
+            <pma:table name="bid_item_img">
+                CREATE TABLE `bid_item_img` (
+                  `id` int(11) NOT NULL AUTO_INCREMENT,
+                  `parentId` int(11) NOT NULL,
+                  `filename` varchar(255) NOT NULL,
+                  PRIMARY KEY (`id`),
+                  KEY `bid_item_img_ibfk_1` (`parentId`),
+                  CONSTRAINT `bid_item_img_ibfk_1` FOREIGN KEY (`parentId`) REFERENCES `bid_item_detail` (`id`)
+                ) ENGINE=InnoDB AUTO_INCREMENT=23 DEFAULT CHARSET=latin1;
+            </pma:table>
+            <pma:table name="bid_manager">
+                CREATE TABLE `bid_manager` (
+                  `ownerId` int(11) NOT NULL,
+                  `bidItemId` int(11) NOT NULL,
+                  `bidStatus` int(11) NOT NULL,
+                  KEY `ownerId` (`ownerId`),
+                  KEY `bidItemId` (`bidItemId`),
+                  KEY `bidStatus` (`bidStatus`),
+                  CONSTRAINT `bid_manager_ibfk_1` FOREIGN KEY (`ownerId`) REFERENCES `user_account` (`id`),
+                  CONSTRAINT `bid_manager_ibfk_2` FOREIGN KEY (`bidItemId`) REFERENCES `bid_item` (`id`),
+                  CONSTRAINT `bid_manager_ibfk_3` FOREIGN KEY (`bidStatus`) REFERENCES `statustype` (`id`)
+                ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+            </pma:table>
+            <pma:table name="gio_address">
+                CREATE TABLE `gio_address` (
+                  `id` int(11) NOT NULL AUTO_INCREMENT,
+                  `storeId` int(11) NOT NULL,
+                  `longitude` varchar(255) NOT NULL,
+                  `latitude` varchar(255) NOT NULL,
+                  PRIMARY KEY (`id`),
+                  KEY `storeId` (`storeId`),
+                  CONSTRAINT `gio_address_ibfk_1` FOREIGN KEY (`storeId`) REFERENCES `store` (`id`)
+                ) ENGINE=InnoDB AUTO_INCREMENT=20 DEFAULT CHARSET=latin1;
+            </pma:table>
+            <pma:table name="item">
+                CREATE TABLE `item` (
+                  `id` int(11) NOT NULL AUTO_INCREMENT,
+                  `itemName` varchar(255) NOT NULL,
+                  `itemPrice` varchar(255) NOT NULL,
+                  `itemDescription` varchar(255) NOT NULL,
+                  `itemStack` varchar(255) NOT NULL,
+                  `itemRating` double NOT NULL,
+                  `tagId` int(11) NOT NULL,
+                  `categoryId` int(11) NOT NULL,
+                  `topupId` int(11) NOT NULL,
+                  PRIMARY KEY (`id`),
+                  KEY `categoryId` (`categoryId`),
+                  KEY `tagId` (`tagId`),
+                  KEY `topupId` (`topupId`),
+                  CONSTRAINT `item_ibfk_1` FOREIGN KEY (`categoryId`) REFERENCES `item_category` (`id`),
+                  CONSTRAINT `item_ibfk_2` FOREIGN KEY (`tagId`) REFERENCES `item_tags` (`id`),
+                  CONSTRAINT `item_ibfk_3` FOREIGN KEY (`topupId`) REFERENCES `topup_percentage` (`id`)
+                ) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=latin1;
+            </pma:table>
+            <pma:trigger name="deleteOtherConstraints">
+                CREATE TRIGGER `deleteOtherConstraints` BEFORE DELETE ON `item`
+                 FOR EACH ROW BEGIN
+                 DELETE FROM `item_img` WHERE parentId = old.id;
+                 DELETE FROM `item_reviews` WHERE itemId = old.id;
+                 DELETE FROM `item_rating` WHERE itemId = old.id;
+                 DELETE FROM `storeitem` WHERE itemId = old.id;
+                END
+            </pma:trigger>
+            <pma:trigger name="makedefaultRating">
+                CREATE TRIGGER `makedefaultRating` AFTER INSERT ON `item`
+                 FOR EACH ROW BEGIN
+                INSERT INTO item_rating VALUES (new.id,'0','0','0','0','0');
+                END
+            </pma:trigger>
+            <pma:table name="item_category">
+                CREATE TABLE `item_category` (
+                  `id` int(11) NOT NULL AUTO_INCREMENT,
+                  `categoryName` varchar(100) NOT NULL,
+                  PRIMARY KEY (`id`)
+                ) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=latin1;
+            </pma:table>
+            <pma:table name="item_img">
+                CREATE TABLE `item_img` (
+                  `id` int(11) NOT NULL AUTO_INCREMENT,
+                  `parentId` int(11) NOT NULL,
+                  `filename` varchar(100) NOT NULL,
+                  PRIMARY KEY (`id`),
+                  KEY `parentId` (`parentId`),
+                  CONSTRAINT `item_img_ibfk_1` FOREIGN KEY (`parentId`) REFERENCES `item` (`id`)
+                ) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=latin1;
+            </pma:table>
+            <pma:table name="item_rating">
+                CREATE TABLE `item_rating` (
+                  `itemId` int(11) NOT NULL,
+                  `star5` int(11) NOT NULL DEFAULT 0,
+                  `star4` int(11) NOT NULL DEFAULT 0,
+                  `star3` int(11) NOT NULL DEFAULT 0,
+                  `star2` int(11) NOT NULL DEFAULT 0,
+                  `star1` int(11) NOT NULL DEFAULT 0,
+                  PRIMARY KEY (`itemId`),
+                  CONSTRAINT `item_rating_ibfk_1` FOREIGN KEY (`itemId`) REFERENCES `item` (`id`)
+                ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+            </pma:table>
+            <pma:trigger name="updateItemRating">
+                CREATE TRIGGER `updateItemRating` AFTER UPDATE ON `item_rating`
+                 FOR EACH ROW BEGIN 
+                UPDATE item SET itemRating = Round(((new.star5*5 + new.star4*4 + new.star3*3 + new.star2*2 + new.star1*1)/(new.star5+new.star4+new.star3+new.star2+new.star1)),1) WHERE id = new.itemId;
+                END
+            </pma:trigger>
+            <pma:table name="item_reviews">
+                CREATE TABLE `item_reviews` (
+                  `itemId` int(11) NOT NULL,
+                  `useraccountId` int(11) NOT NULL,
+                  `comment` varchar(255) NOT NULL,
+                  KEY `itemId` (`itemId`),
+                  CONSTRAINT `item_reviews_ibfk_1` FOREIGN KEY (`itemId`) REFERENCES `item` (`id`)
+                ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+            </pma:table>
+            <pma:table name="item_tags">
+                CREATE TABLE `item_tags` (
+                  `id` int(11) NOT NULL AUTO_INCREMENT,
+                  `tagName` varchar(100) NOT NULL,
+                  PRIMARY KEY (`id`)
+                ) ENGINE=InnoDB AUTO_INCREMENT=37 DEFAULT CHARSET=latin1;
+            </pma:table>
+            <pma:table name="messagetype">
+                CREATE TABLE `messagetype` (
+                  `id` int(11) NOT NULL AUTO_INCREMENT,
+                  `messageType` varchar(255) NOT NULL,
+                  PRIMARY KEY (`id`)
+                ) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=latin1;
+            </pma:table>
+            <pma:table name="notificationtype">
+                CREATE TABLE `notificationtype` (
+                  `id` int(11) NOT NULL AUTO_INCREMENT,
+                  `notificationType` varchar(255) NOT NULL,
+                  PRIMARY KEY (`id`)
+                ) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=latin1;
+            </pma:table>
+            <pma:table name="order">
+                CREATE TABLE `order` (
+                  `id` int(11) NOT NULL AUTO_INCREMENT,
+                  `customerId` int(11) NOT NULL,
+                  `datetime` datetime NOT NULL DEFAULT current_timestamp(),
+                  `orderStatus` int(11) NOT NULL,
+                  `taxId` int(11) NOT NULL,
+                  PRIMARY KEY (`id`),
+                  KEY `customerId` (`customerId`),
+                  KEY `taxId` (`taxId`),
+                  CONSTRAINT `order_ibfk_2` FOREIGN KEY (`taxId`) REFERENCES `tax_percentage` (`id`)
+                ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+            </pma:table>
+            <pma:table name="order_list">
+                CREATE TABLE `order_list` (
+                  `orderId` int(11) NOT NULL,
+                  `itemId` int(11) NOT NULL,
+                  `orderQty` int(11) NOT NULL,
+                  KEY `itemId` (`itemId`),
+                  KEY `orderId` (`orderId`),
+                  CONSTRAINT `order_list_ibfk_1` FOREIGN KEY (`itemId`) REFERENCES `item` (`id`),
+                  CONSTRAINT `order_list_ibfk_2` FOREIGN KEY (`orderId`) REFERENCES `order` (`id`)
+                ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+            </pma:table>
+            <pma:table name="spacekraft_user">
+                CREATE TABLE `spacekraft_user` (
+                  `id` int(11) NOT NULL AUTO_INCREMENT,
+                  `username` varchar(255) NOT NULL,
+                  `password` varchar(255) NOT NULL,
+                  `hiLevel` varchar(255) DEFAULT '0',
+                  `hiScore` varchar(255) DEFAULT '0',
+                  `coins` varchar(255) DEFAULT '0',
+                  PRIMARY KEY (`id`)
+                ) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4;
+            </pma:table>
+            <pma:table name="statustype">
+                CREATE TABLE `statustype` (
+                  `id` int(11) NOT NULL AUTO_INCREMENT,
+                  `statusName` varchar(255) NOT NULL,
+                  PRIMARY KEY (`id`)
+                ) ENGINE=InnoDB AUTO_INCREMENT=19 DEFAULT CHARSET=latin1;
+            </pma:table>
+            <pma:table name="store">
+                CREATE TABLE `store` (
+                  `id` int(11) NOT NULL AUTO_INCREMENT,
+                  `accountId` int(11) NOT NULL,
+                  `storeName` varchar(255) NOT NULL,
+                  `storeInfo` varchar(255) NOT NULL,
+                  `storeAddress` varchar(255) NOT NULL,
+                  `storeRating` double NOT NULL DEFAULT 0,
+                  `storeFollowers` int(11) NOT NULL DEFAULT 0,
+                  `storeVisited` int(11) NOT NULL DEFAULT 0,
+                  `storeStatus` int(11) NOT NULL DEFAULT 0,
+                  PRIMARY KEY (`id`),
+                  KEY `accountId` (`accountId`),
+                  KEY `storeStatus` (`storeStatus`),
+                  CONSTRAINT `store_ibfk_2` FOREIGN KEY (`storeStatus`) REFERENCES `statustype` (`id`)
+                ) ENGINE=InnoDB AUTO_INCREMENT=53 DEFAULT CHARSET=latin1;
+            </pma:table>
+            <pma:trigger name="NotifyUserStore">
+                CREATE TRIGGER `NotifyUserStore` AFTER UPDATE ON `store`
+                 FOR EACH ROW BEGIN
+                 IF old.storeStatus  = '15' AND new.storeStatus  = '1' THEN
+                	INSERT INTO user_notification VALUES (null,new.accountId,'Congratulations! you can now Sell your Scap Things Using this App.',CURRENT_DATE,'2','10');
+                    
+                 ELSEIF old.storeStatus = '15' AND new.storeStatus = '14' THEN
+                    INSERT INTO user_notification VALUES (null,new.accountId,'Sorry you cant manage your store yet due to your verification Image. Please check your Email Thank you!',CURRENT_DATE,'2','10');
+                 END IF;
+                
+                END
+            </pma:trigger>
+            <pma:trigger name="createVerificationAndLocation">
+                CREATE TRIGGER `createVerificationAndLocation` AFTER INSERT ON `store`
+                 FOR EACH ROW BEGIN
+                 INSERT INTO store_veriification_img VALUES (null,new.id,'null');
+                 INSERT INTO gio_address VALUES (null,new.id,'0','0');
+                END
+            </pma:trigger>
+            <pma:table name="storefollowers">
+                CREATE TABLE `storefollowers` (
+                  `id` int(11) NOT NULL AUTO_INCREMENT,
+                  `storeId` int(11) NOT NULL,
+                  `accountId` int(11) NOT NULL,
+                  PRIMARY KEY (`id`),
+                  KEY `accountId` (`accountId`),
+                  KEY `storeId` (`storeId`),
+                  CONSTRAINT `storefollowers_ibfk_2` FOREIGN KEY (`storeId`) REFERENCES `store` (`id`)
+                ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+            </pma:table>
+            <pma:table name="storeitem">
+                CREATE TABLE `storeitem` (
+                  `storeId` int(11) NOT NULL,
+                  `itemId` int(11) NOT NULL,
+                  KEY `itemId` (`itemId`),
+                  KEY `storeId` (`storeId`),
+                  CONSTRAINT `storeitem_ibfk_1` FOREIGN KEY (`itemId`) REFERENCES `item` (`id`),
+                  CONSTRAINT `storeitem_ibfk_2` FOREIGN KEY (`storeId`) REFERENCES `store` (`id`)
+                ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+            </pma:table>
+            <pma:table name="store_chat_area">
+                CREATE TABLE `store_chat_area` (
+                  `id` int(11) NOT NULL AUTO_INCREMENT,
+                  `recieverId` int(11) NOT NULL,
+                  `senderId` int(11) NOT NULL,
+                  `message` varchar(255) NOT NULL,
+                  `datetime` datetime NOT NULL,
+                  `messageType` int(11) NOT NULL,
+                  `status` int(11) NOT NULL,
+                  PRIMARY KEY (`id`),
+                  KEY `recieverId` (`recieverId`),
+                  KEY `senderId` (`senderId`),
+                  KEY `status` (`status`),
+                  KEY `messageType` (`messageType`),
+                  CONSTRAINT `store_chat_area_ibfk_1` FOREIGN KEY (`recieverId`) REFERENCES `store` (`id`),
+                  CONSTRAINT `store_chat_area_ibfk_2` FOREIGN KEY (`senderId`) REFERENCES `user_account` (`id`),
+                  CONSTRAINT `store_chat_area_ibfk_3` FOREIGN KEY (`status`) REFERENCES `statustype` (`id`),
+                  CONSTRAINT `store_chat_area_ibfk_4` FOREIGN KEY (`messageType`) REFERENCES `messagetype` (`id`)
+                ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+            </pma:table>
+            <pma:table name="store_img">
+                CREATE TABLE `store_img` (
+                  `id` int(11) NOT NULL AUTO_INCREMENT,
+                  `parentId` int(11) NOT NULL,
+                  `filename` varchar(255) NOT NULL,
+                  PRIMARY KEY (`id`),
+                  KEY `storeId` (`parentId`),
+                  CONSTRAINT `store_img_ibfk_1` FOREIGN KEY (`parentId`) REFERENCES `store` (`id`)
+                ) ENGINE=InnoDB AUTO_INCREMENT=63 DEFAULT CHARSET=latin1;
+            </pma:table>
+            <pma:table name="store_rating">
+                CREATE TABLE `store_rating` (
+                  `storeId` int(11) NOT NULL,
+                  `star5` int(11) NOT NULL DEFAULT 0,
+                  `star4` int(11) NOT NULL DEFAULT 0,
+                  `star3` int(11) NOT NULL DEFAULT 0,
+                  `star2` int(11) NOT NULL DEFAULT 0,
+                  `star1` int(11) NOT NULL DEFAULT 0,
+                  KEY `storeId` (`storeId`),
+                  CONSTRAINT `store_rating_ibfk_1` FOREIGN KEY (`storeId`) REFERENCES `store` (`id`)
+                ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+            </pma:table>
+            <pma:table name="store_veriification_img">
+                CREATE TABLE `store_veriification_img` (
+                  `id` int(11) NOT NULL AUTO_INCREMENT,
+                  `parentId` int(11) NOT NULL,
+                  `filename` varchar(255) NOT NULL,
+                  PRIMARY KEY (`id`),
+                  KEY `storeId` (`parentId`),
+                  CONSTRAINT `store_veriification_img_ibfk_1` FOREIGN KEY (`parentId`) REFERENCES `store` (`id`)
+                ) ENGINE=InnoDB AUTO_INCREMENT=37 DEFAULT CHARSET=latin1;
+            </pma:table>
+            <pma:trigger name="updateStoreStatus">
+                CREATE TRIGGER `updateStoreStatus` AFTER UPDATE ON `store_veriification_img`
+                 FOR EACH ROW BEGIN
+                	UPDATE store SET storeStatus='15' WHERE id=new.parentId;
+                END
+            </pma:trigger>
+            <pma:table name="tax_percentage">
+                CREATE TABLE `tax_percentage` (
+                  `id` int(11) NOT NULL AUTO_INCREMENT,
+                  `taxPercentage` int(11) NOT NULL,
+                  `effectivityDate` date NOT NULL,
+                  PRIMARY KEY (`id`)
+                ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
+            </pma:table>
+            <pma:table name="topup_percentage">
+                CREATE TABLE `topup_percentage` (
+                  `id` int(11) NOT NULL AUTO_INCREMENT,
+                  `topupPercentage` int(11) NOT NULL,
+                  `effectivityDate` date NOT NULL,
+                  PRIMARY KEY (`id`)
+                ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
+            </pma:table>
+            <pma:table name="user">
+                CREATE TABLE `user` (
+                  `id` int(11) NOT NULL AUTO_INCREMENT,
+                  `username` varchar(255) NOT NULL,
+                  `password` varchar(255) NOT NULL,
+                  `userType` varchar(255) NOT NULL,
+                  PRIMARY KEY (`id`)
+                ) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=latin1;
+            </pma:table>
+            <pma:table name="user_account">
+                CREATE TABLE `user_account` (
+                  `id` int(11) NOT NULL AUTO_INCREMENT,
+                  `userId` int(11) NOT NULL,
+                  `firstname` varchar(255) NOT NULL,
+                  `lastname` varchar(255) NOT NULL,
+                  `contactNo` varchar(255) NOT NULL,
+                  `gender` varchar(255) NOT NULL,
+                  `email` varchar(255) NOT NULL,
+                  `zipCode` varchar(255) NOT NULL DEFAULT '0',
+                  `accountStatus` int(11) NOT NULL,
+                  PRIMARY KEY (`id`),
+                  KEY `accountStatus` (`accountStatus`),
+                  KEY `userId` (`userId`),
+                  CONSTRAINT `user_account_ibfk_1` FOREIGN KEY (`accountStatus`) REFERENCES `statustype` (`id`),
+                  CONSTRAINT `user_account_ibfk_2` FOREIGN KEY (`userId`) REFERENCES `user` (`id`)
+                ) ENGINE=InnoDB AUTO_INCREMENT=30 DEFAULT CHARSET=latin1;
+            </pma:table>
+            <pma:trigger name="Create_NullFilename">
+                CREATE TRIGGER `Create_NullFilename` AFTER INSERT ON `user_account`
+                 FOR EACH ROW BEGIN
+                INSERT INTO user_img VALUES (null,new.id,'null');
+                END
+            </pma:trigger>
+            <pma:table name="user_img">
+                CREATE TABLE `user_img` (
+                  `id` int(11) NOT NULL AUTO_INCREMENT,
+                  `parentId` int(11) NOT NULL,
+                  `filename` varchar(255) NOT NULL,
+                  PRIMARY KEY (`id`),
+                  KEY `accountId` (`parentId`)
+                ) ENGINE=InnoDB AUTO_INCREMENT=32 DEFAULT CHARSET=latin1;
+            </pma:table>
+            <pma:table name="user_notification">
+                CREATE TABLE `user_notification` (
+                  `id` int(11) NOT NULL AUTO_INCREMENT,
+                  `userId` int(11) NOT NULL,
+                  `message` varchar(255) NOT NULL,
+                  `dateRecieved` datetime NOT NULL DEFAULT current_timestamp(),
+                  `notificationType` int(11) NOT NULL,
+                  `status` int(11) NOT NULL,
+                  PRIMARY KEY (`id`),
+                  KEY `status` (`status`),
+                  KEY `notificationType` (`notificationType`),
+                  KEY `userId` (`userId`),
+                  CONSTRAINT `user_notification_ibfk_1` FOREIGN KEY (`status`) REFERENCES `statustype` (`id`),
+                  CONSTRAINT `user_notification_ibfk_2` FOREIGN KEY (`notificationType`) REFERENCES `notificationtype` (`id`),
+                  CONSTRAINT `user_notification_ibfk_3` FOREIGN KEY (`userId`) REFERENCES `user_account` (`id`)
+                ) ENGINE=InnoDB AUTO_INCREMENT=56 DEFAULT CHARSET=latin1;
+            </pma:table>
+            <pma:table name="user_reports">
+                CREATE TABLE `user_reports` (
+                  `id` int(11) NOT NULL AUTO_INCREMENT,
+                  `userAccountId` int(11) NOT NULL,
+                  `message` varchar(255) NOT NULL,
+                  `datetime` datetime NOT NULL DEFAULT current_timestamp(),
+                  `reportStatus` int(11) NOT NULL,
+                  PRIMARY KEY (`id`),
+                  KEY `userId` (`userAccountId`)
+                ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+            </pma:table>
+            <pma:table name="zip_code">
+                CREATE TABLE `zip_code` (
+                  `id` int(11) NOT NULL,
+                  `location` varchar(255) NOT NULL,
+                  PRIMARY KEY (`id`)
+                ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+            </pma:table>
+            <pma:procedure name="getAddresses">
+                CREATE DEFINER=`root`@`localhost` PROCEDURE `getAddresses`()
+                    NO SQL
+                BEGIN
+                SELECT * FROM zip_code order BY zip_code.location ASC;
+                END
+            </pma:procedure>
+            <pma:procedure name="getBidChat">
+                CREATE DEFINER=`root`@`localhost` PROCEDURE `getBidChat`(IN `bidId` INT, IN `user1Id` INT, IN `user2Id` INT)
+                    NO SQL
+                BEGIN
+                SELECT * FROM `bid_chat_area` WHERE `senderId` = user1Id OR `senderId` = user2Id AND `recieverId` = user1Id OR `recieverId` = user2Id AND `bidItemId` = bidId;
+                END
+            </pma:procedure>
+            <pma:procedure name="getBidders">
+                CREATE DEFINER=`root`@`localhost` PROCEDURE `getBidders`(IN `ownerId` INT)
+                    NO SQL
+                BEGIN
+                SELECT * FROM bidders WHERE bidders.bidItemId IN (SELECT DISTINCT id FROM bid_item WHERE id in (SELECT DISTINCT bidItemId FROM bid_manager WHERE bid_manager.ownerId=ownerId) AND bidders.requestStatus = 16);
+                END
+            </pma:procedure>
+            <pma:procedure name="getBiddersSuggestedItem">
+                CREATE DEFINER=`root`@`localhost` PROCEDURE `getBiddersSuggestedItem`(IN `ownerId` INT)
+                    NO SQL
+                BEGIN
+                SELECT bid.id,bid.itemName,bid.itemPriceorBudget,bid.description FROM bid_item_detail bid JOIN bidders b ON bid.id = b.suggestedItemId JOIN bid_item bi ON b.bidItemId = bi.id JOIN bid_manager bm on bi.id = bm.bidItemId WHERE bm.ownerId = ownerId;
+                END
+            </pma:procedure>
+            <pma:procedure name="getBidItem">
+                CREATE DEFINER=`root`@`localhost` PROCEDURE `getBidItem`(IN `ownerId` INT)
+                    NO SQL
+                BEGIN
+                SELECT * FROM bid_item WHERE bid_item.id IN (SELECT DISTINCT bidItemId FROM bid_manager WHERE bid_manager.ownerId=ownerId);
+                END
+            </pma:procedure>
+            <pma:procedure name="getBidItemDetails">
+                CREATE DEFINER=`root`@`localhost` PROCEDURE `getBidItemDetails`(IN `ownerId` INT)
+                    NO SQL
+                BEGIN
+                SELECT * FROM bid_item_detail WHERE bid_item_detail.id IN (SELECT DISTINCT bidItem FROM bid_item WHERE bid_item.id IN (SELECT  DISTINCT bidItemId FROM bid_manager WHERE bid_manager.ownerId=ownerId));
+                END
+            </pma:procedure>
+            <pma:procedure name="getBidItemImages">
+                CREATE DEFINER=`root`@`localhost` PROCEDURE `getBidItemImages`(IN `ownerId` INT)
+                    NO SQL
+                BEGIN
+                SELECT bii.id,bii.parentId,bii.filename FROM bid_item_img bii JOIN
+                bid_item_detail bid ON bii.parentId = bid.id JOIN bidders b on bii.parentId = b.suggestedItemId JOIN bid_item bi ON bii.parentId = bi.bidItem JOIN bid_manager bm ON bi.id = bm.bidItemId WHERE bm.ownerId = ownerId OR b.accountId = ownerId;
+                END
+            </pma:procedure>
+            <pma:procedure name="getHiScore">
+                CREATE DEFINER=`root`@`localhost` PROCEDURE `getHiScore`()
+                    NO SQL
+                BEGIN
+                SELECT * FROM spacekraft_user WHERE hiScore != '0' ORDER BY spacekraft_user.hiScore DESC;
+                END
+            </pma:procedure>
+            <pma:procedure name="getOtherBidItems">
+                CREATE DEFINER=`root`@`localhost` PROCEDURE `getOtherBidItems`(IN `ownerId` INT)
+                    NO SQL
+                BEGIN
+                SELECT * FROM bidders b WHERE b.accountId = ownerId AND b.requestStatus != 17;
+                END
+            </pma:procedure>
+            <pma:procedure name="getOthersBidItemDetails">
+                CREATE DEFINER=`root`@`localhost` PROCEDURE `getOthersBidItemDetails`(IN `ownerId` INT)
+                    NO SQL
+                BEGIN
+                SELECT * FROM bid_item_detail WHERE bid_item_detail.id IN (SELECT DISTINCT suggestedItemId FROM bidders WHERE bidders.accountId = ownerId);
+                END
+            </pma:procedure>
+            <pma:procedure name="getStoreItem">
+                CREATE DEFINER=`root`@`localhost` PROCEDURE `getStoreItem`(IN `storeId` INT)
+                    NO SQL
+                BEGIN
+                	SELECT * FROM item WHERE id IN (SELECT DISTINCT itemId FROM storeitem WHERE storeitem.storeId=storeId);
+                END
+            </pma:procedure>
+            <pma:procedure name="getStoreItemImage">
+                CREATE DEFINER=`root`@`localhost` PROCEDURE `getStoreItemImage`(IN `id` INT)
+                    NO SQL
+                BEGIN
+                	SELECT * FROM item_img WHERE parentId IN (SELECT DISTINCT itemId FROM storeitem WHERE storeitem.storeId=storeId);
+                END
+            </pma:procedure>
+            <pma:procedure name="getStoreItemRate">
+                CREATE DEFINER=`root`@`localhost` PROCEDURE `getStoreItemRate`(IN `id` INT)
+                    NO SQL
+                BEGIN
+                	SELECT * FROM item_rating WHERE itemId IN (SELECT DISTINCT itemId FROM storeitem WHERE storeitem.storeId=storeId);
+                END
+            </pma:procedure>
+            <pma:procedure name="getStoreItemReviews">
+                CREATE DEFINER=`root`@`localhost` PROCEDURE `getStoreItemReviews`(IN `id` INT)
+                    NO SQL
+                BEGIN
+                SELECT * FROM item_reviews WHERE itemId IN (SELECT DISTINCT itemId FROM storeitem WHERE storeitem.storeId=storeId);
+                END
+            </pma:procedure>
+            <pma:procedure name="getStores">
+                CREATE DEFINER=`root`@`localhost` PROCEDURE `getStores`(IN `id` INT)
+                    NO SQL
+                BEGIN
+                SELECT DISTINCT storeId FROM storeitem WHERE storeId != id;
+                END
+            </pma:procedure>
+            <pma:procedure name="getUsersByLocation">
+                CREATE DEFINER=`root`@`localhost` PROCEDURE `getUsersByLocation`(IN `zipCode` INT)
+                    NO SQL
+                BEGIN
+                SELECT id FROM user_account WHERE user_account.zipCode = zipCode;
+                END
+            </pma:procedure>
+            <pma:procedure name="removeRequest">
+                CREATE DEFINER=`root`@`localhost` PROCEDURE `removeRequest`(IN `bidId` INT)
+                    NO SQL
+                BEGIN
+                
+                DELETE FROM bid_item_detail WHERE id IN (SELECT DISTINCT suggestedItemId FROM bidders WHERE bidders.bidItemId = bidId);
+                
+                DELETE FROM bidders WHERE bidders.bidItemId = bidId;
+                
+                DELETE FROM bid_item_detail WHERE id IN (SELECT DISTINCT bidItem FROM bid_item WHERE bid_item.id = bidId);
+                
+                DELETE FROM bid_item WHERE bid_item.id = bidId;
+                
+                DELETE FROM bid_manager WHERE bid_manager.bidItemId = bidId;
+                
+                END
+            </pma:procedure>
+        </pma:database>
+    </pma:structure_schemas>
+
+    <!--
+    - Database: 'hanapyesa'
+    -->
+    <database name="hanapyesa">
+        <!-- Table bidders -->
+        <table name="bidders">
+            <column name="id">16</column>
+            <column name="bidItemId">21</column>
+            <column name="accountId">26</column>
+            <column name="suggestedItemId">26</column>
+            <column name="requestStatus">12</column>
+        </table>
+        <table name="bidders">
+            <column name="id">17</column>
+            <column name="bidItemId">22</column>
+            <column name="accountId">26</column>
+            <column name="suggestedItemId">27</column>
+            <column name="requestStatus">12</column>
+        </table>
+        <table name="bidders">
+            <column name="id">18</column>
+            <column name="bidItemId">23</column>
+            <column name="accountId">26</column>
+            <column name="suggestedItemId">28</column>
+            <column name="requestStatus">12</column>
+        </table>
+        <table name="bidders">
+            <column name="id">19</column>
+            <column name="bidItemId">24</column>
+            <column name="accountId">26</column>
+            <column name="suggestedItemId">30</column>
+            <column name="requestStatus">16</column>
+        </table>
+        <table name="bidders">
+            <column name="id">20</column>
+            <column name="bidItemId">25</column>
+            <column name="accountId">6</column>
+            <column name="suggestedItemId">31</column>
+            <column name="requestStatus">12</column>
+        </table>
+        <table name="bidders">
+            <column name="id">21</column>
+            <column name="bidItemId">25</column>
+            <column name="accountId">26</column>
+            <column name="suggestedItemId">31</column>
+            <column name="requestStatus">12</column>
+        </table>
+        <table name="bidders">
+            <column name="id">22</column>
+            <column name="bidItemId">25</column>
+            <column name="accountId">27</column>
+            <column name="suggestedItemId">31</column>
+            <column name="requestStatus">12</column>
+        </table>
+        <table name="bidders">
+            <column name="id">23</column>
+            <column name="bidItemId">25</column>
+            <column name="accountId">28</column>
+            <column name="suggestedItemId">32</column>
+            <column name="requestStatus">16</column>
+        </table>
+        <!-- Table bid_chat_area -->
+        <table name="bid_chat_area">
+            <column name="id">1</column>
+            <column name="bidItemId">25</column>
+            <column name="recieverId">29</column>
+            <column name="senderId">28</column>
+            <column name="message">hii</column>
+            <column name="datetime">2020-07-02 05:54:08</column>
+            <column name="messageType">1</column>
+            <column name="status">9</column>
+        </table>
+        <table name="bid_chat_area">
+            <column name="id">2</column>
+            <column name="bidItemId">25</column>
+            <column name="recieverId">29</column>
+            <column name="senderId">28</column>
+            <column name="message">hello</column>
+            <column name="datetime">2020-07-02 06:22:44</column>
+            <column name="messageType">1</column>
+            <column name="status">9</column>
+        </table>
+        <table name="bid_chat_area">
+            <column name="id">5</column>
+            <column name="bidItemId">25</column>
+            <column name="recieverId">29</column>
+            <column name="senderId">28</column>
+            <column name="message">paliton na nimo maam?</column>
+            <column name="datetime">2020-07-02 07:27:50</column>
+            <column name="messageType">1</column>
+            <column name="status">9</column>
+        </table>
+        <table name="bid_chat_area">
+            <column name="id">6</column>
+            <column name="bidItemId">25</column>
+            <column name="recieverId">29</column>
+            <column name="senderId">28</column>
+            <column name="message">uhmm</column>
+            <column name="datetime">2020-07-02 08:07:34</column>
+            <column name="messageType">1</column>
+            <column name="status">9</column>
+        </table>
+        <table name="bid_chat_area">
+            <column name="id">7</column>
+            <column name="bidItemId">25</column>
+            <column name="recieverId">28</column>
+            <column name="senderId">29</column>
+            <column name="message">nah wala paman koi budget</column>
+            <column name="datetime">2020-07-02 08:16:00</column>
+            <column name="messageType">1</column>
+            <column name="status">9</column>
+        </table>
+        <!-- Table bid_item -->
+        <table name="bid_item">
+            <column name="id">21</column>
+            <column name="bidItem">26</column>
+            <column name="datetime">2020-06-23</column>
+            <column name="sendLocation">9000</column>
+        </table>
+        <table name="bid_item">
+            <column name="id">22</column>
+            <column name="bidItem">27</column>
+            <column name="datetime">2020-06-23</column>
+            <column name="sendLocation">9000</column>
+        </table>
+        <table name="bid_item">
+            <column name="id">23</column>
+            <column name="bidItem">28</column>
+            <column name="datetime">2020-06-23</column>
+            <column name="sendLocation">9000</column>
+        </table>
+        <table name="bid_item">
+            <column name="id">24</column>
+            <column name="bidItem">29</column>
+            <column name="datetime">2020-06-25</column>
+            <column name="sendLocation">9000</column>
+        </table>
+        <table name="bid_item">
+            <column name="id">25</column>
+            <column name="bidItem">31</column>
+            <column name="datetime">2020-06-30</column>
+            <column name="sendLocation">9000</column>
+        </table>
+        <!-- Table bid_item_detail -->
+        <table name="bid_item_detail">
+            <column name="id">26</column>
+            <column name="itemName">iahrud</column>
+            <column name="itemPriceorBudget">600</column>
+            <column name="description">hsud</column>
+        </table>
+        <table name="bid_item_detail">
+            <column name="id">27</column>
+            <column name="itemName">ianudud</column>
+            <column name="itemPriceorBudget">600</column>
+            <column name="description">hdhx</column>
+        </table>
+        <table name="bid_item_detail">
+            <column name="id">28</column>
+            <column name="itemName">short</column>
+            <column name="itemPriceorBudget">100</column>
+            <column name="description">bahalag 2nd hand</column>
+        </table>
+        <table name="bid_item_detail">
+            <column name="id">29</column>
+            <column name="itemName">Laptop</column>
+            <column name="itemPriceorBudget">2500</column>
+            <column name="description">Bahalag 2nd hand</column>
+        </table>
+        <table name="bid_item_detail">
+            <column name="id">30</column>
+            <column name="itemName">Asus laptop - 9800</column>
+            <column name="itemPriceorBudget">2000</column>
+            <column name="description">1 year used</column>
+        </table>
+        <table name="bid_item_detail">
+            <column name="id">31</column>
+            <column name="itemName">Video Card ddr2</column>
+            <column name="itemPriceorBudget">1500</column>
+            <column name="description">Bahalag 2nd hand lang</column>
+        </table>
+        <table name="bid_item_detail">
+            <column name="id">32</column>
+            <column name="itemName">HD 4560 DDR2</column>
+            <column name="itemPriceorBudget">1700</column>
+            <column name="description">2 year used</column>
+        </table>
+        <!-- Table bid_item_img -->
+        <table name="bid_item_img">
+            <column name="id">2</column>
+            <column name="parentId">29</column>
+            <column name="filename">527602_IMG_20200218_140238.jpg</column>
+        </table>
+        <table name="bid_item_img">
+            <column name="id">3</column>
+            <column name="parentId">29</column>
+            <column name="filename">291386_IMG_20200218_140238.jpg</column>
+        </table>
+        <table name="bid_item_img">
+            <column name="id">20</column>
+            <column name="parentId">32</column>
+            <column name="filename">363447_image_picker570757053708434023jpg</column>
+        </table>
+        <table name="bid_item_img">
+            <column name="id">21</column>
+            <column name="parentId">32</column>
+            <column name="filename">214927_image_picker9048434183585970873jpg</column>
+        </table>
+        <table name="bid_item_img">
+            <column name="id">22</column>
+            <column name="parentId">32</column>
+            <column name="filename">782652_image_picker3345461957208004553jpg</column>
+        </table>
+        <!-- Table bid_manager -->
+        <table name="bid_manager">
+            <column name="ownerId">6</column>
+            <column name="bidItemId">21</column>
+            <column name="bidStatus">5</column>
+        </table>
+        <table name="bid_manager">
+            <column name="ownerId">6</column>
+            <column name="bidItemId">22</column>
+            <column name="bidStatus">5</column>
+        </table>
+        <table name="bid_manager">
+            <column name="ownerId">6</column>
+            <column name="bidItemId">23</column>
+            <column name="bidStatus">5</column>
+        </table>
+        <table name="bid_manager">
+            <column name="ownerId">6</column>
+            <column name="bidItemId">24</column>
+            <column name="bidStatus">5</column>
+        </table>
+        <table name="bid_manager">
+            <column name="ownerId">29</column>
+            <column name="bidItemId">25</column>
+            <column name="bidStatus">5</column>
+        </table>
+        <!-- Table gio_address -->
+        <table name="gio_address">
+            <column name="id">1</column>
+            <column name="storeId">37</column>
+            <column name="longitude">124.6318254</column>
+            <column name="latitude">8.505401</column>
+        </table>
+        <table name="gio_address">
+            <column name="id">15</column>
+            <column name="storeId">51</column>
+            <column name="longitude">0</column>
+            <column name="latitude">0</column>
+        </table>
+        <table name="gio_address">
+            <column name="id">16</column>
+            <column name="storeId">52</column>
+            <column name="longitude">0</column>
+            <column name="latitude">0</column>
+        </table>
+        <table name="gio_address">
+            <column name="id">17</column>
+            <column name="storeId">37</column>
+            <column name="longitude">0</column>
+            <column name="latitude">0</column>
+        </table>
+        <table name="gio_address">
+            <column name="id">18</column>
+            <column name="storeId">51</column>
+            <column name="longitude">0</column>
+            <column name="latitude">0</column>
+        </table>
+        <table name="gio_address">
+            <column name="id">19</column>
+            <column name="storeId">52</column>
+            <column name="longitude">0</column>
+            <column name="latitude">0</column>
+        </table>
+        <!-- Table item -->
+        <table name="item">
+            <column name="id">1</column>
+            <column name="itemName">Laptop (Asus)</column>
+            <column name="itemPrice">2500</column>
+            <column name="itemDescription">Brand New</column>
+            <column name="itemStack">5</column>
+            <column name="itemRating">0</column>
+            <column name="tagId">1</column>
+            <column name="categoryId">5</column>
+            <column name="topupId">1</column>
+        </table>
+        <table name="item">
+            <column name="id">3</column>
+            <column name="itemName">Nokia</column>
+            <column name="itemPrice">250</column>
+            <column name="itemDescription">Guba</column>
+            <column name="itemStack">1</column>
+            <column name="itemRating">0</column>
+            <column name="tagId">31</column>
+            <column name="categoryId">4</column>
+            <column name="topupId">1</column>
+        </table>
+        <table name="item">
+            <column name="id">4</column>
+            <column name="itemName">Huwaei</column>
+            <column name="itemPrice">200</column>
+            <column name="itemDescription">Basin ma gamit pa ang party</column>
+            <column name="itemStack">1</column>
+            <column name="itemRating">0</column>
+            <column name="tagId">31</column>
+            <column name="categoryId">4</column>
+            <column name="topupId">1</column>
+        </table>
+        <table name="item">
+            <column name="id">5</column>
+            <column name="itemName">Cherry Mobile Defect</column>
+            <column name="itemPrice">500</column>
+            <column name="itemDescription">Screen and power button ra ang daot</column>
+            <column name="itemStack">1</column>
+            <column name="itemRating">0</column>
+            <column name="tagId">31</column>
+            <column name="categoryId">4</column>
+            <column name="topupId">1</column>
+        </table>
+        <!-- Table item_category -->
+        <table name="item_category">
+            <column name="id">1</column>
+            <column name="categoryName">Other</column>
+        </table>
+        <table name="item_category">
+            <column name="id">2</column>
+            <column name="categoryName">Motorcyle</column>
+        </table>
+        <table name="item_category">
+            <column name="id">3</column>
+            <column name="categoryName">Bycicle</column>
+        </table>
+        <table name="item_category">
+            <column name="id">4</column>
+            <column name="categoryName">Gadgets</column>
+        </table>
+        <table name="item_category">
+            <column name="id">5</column>
+            <column name="categoryName">Computer</column>
+        </table>
+        <table name="item_category">
+            <column name="id">6</column>
+            <column name="categoryName">Electronic</column>
+        </table>
+        <table name="item_category">
+            <column name="id">7</column>
+            <column name="categoryName">Truck</column>
+        </table>
+        <!-- Table item_img -->
+        <table name="item_img">
+            <column name="id">1</column>
+            <column name="parentId">1</column>
+            <column name="filename">353486_IMG_20200218_140238.jpg</column>
+        </table>
+        <table name="item_img">
+            <column name="id">2</column>
+            <column name="parentId">4</column>
+            <column name="filename">458457_image_picker8239029994669442782jpg</column>
+        </table>
+        <table name="item_img">
+            <column name="id">3</column>
+            <column name="parentId">4</column>
+            <column name="filename">419173_image_picker4525341496289380278jpg</column>
+        </table>
+        <table name="item_img">
+            <column name="id">4</column>
+            <column name="parentId">5</column>
+            <column name="filename">828251_image_picker4606848348438797146jpg</column>
+        </table>
+        <table name="item_img">
+            <column name="id">5</column>
+            <column name="parentId">5</column>
+            <column name="filename">980764_image_picker6353613269930986081jpg</column>
+        </table>
+        <table name="item_img">
+            <column name="id">6</column>
+            <column name="parentId">5</column>
+            <column name="filename">569307_image_picker2615149628130472795jpg</column>
+        </table>
+        <!-- Table item_rating -->
+        <table name="item_rating">
+            <column name="itemId">1</column>
+            <column name="star5">0</column>
+            <column name="star4">0</column>
+            <column name="star3">0</column>
+            <column name="star2">0</column>
+            <column name="star1">0</column>
+        </table>
+        <table name="item_rating">
+            <column name="itemId">3</column>
+            <column name="star5">0</column>
+            <column name="star4">0</column>
+            <column name="star3">0</column>
+            <column name="star2">0</column>
+            <column name="star1">0</column>
+        </table>
+        <table name="item_rating">
+            <column name="itemId">4</column>
+            <column name="star5">0</column>
+            <column name="star4">0</column>
+            <column name="star3">0</column>
+            <column name="star2">0</column>
+            <column name="star1">0</column>
+        </table>
+        <table name="item_rating">
+            <column name="itemId">5</column>
+            <column name="star5">0</column>
+            <column name="star4">0</column>
+            <column name="star3">0</column>
+            <column name="star2">0</column>
+            <column name="star1">0</column>
+        </table>
+        <!-- Table item_reviews -->
+        <!-- Table item_tags -->
+        <table name="item_tags">
+            <column name="id">1</column>
+            <column name="tagName">Other</column>
+        </table>
+        <table name="item_tags">
+            <column name="id">2</column>
+            <column name="tagName">Dynamo</column>
+        </table>
+        <table name="item_tags">
+            <column name="id">3</column>
+            <column name="tagName">Ram</column>
+        </table>
+        <table name="item_tags">
+            <column name="id">4</column>
+            <column name="tagName">CPU</column>
+        </table>
+        <table name="item_tags">
+            <column name="id">5</column>
+            <column name="tagName">Fan</column>
+        </table>
+        <table name="item_tags">
+            <column name="id">6</column>
+            <column name="tagName">Bearing</column>
+        </table>
+        <table name="item_tags">
+            <column name="id">7</column>
+            <column name="tagName">Motherboard</column>
+        </table>
+        <table name="item_tags">
+            <column name="id">8</column>
+            <column name="tagName">Motor Chases</column>
+        </table>
+        <table name="item_tags">
+            <column name="id">9</column>
+            <column name="tagName">iPhone Headset</column>
+        </table>
+        <table name="item_tags">
+            <column name="id">10</column>
+            <column name="tagName">Mechanical Keyboard</column>
+        </table>
+        <table name="item_tags">
+            <column name="id">11</column>
+            <column name="tagName">CPU FAN</column>
+        </table>
+        <table name="item_tags">
+            <column name="id">12</column>
+            <column name="tagName">Motor cycle Headlight</column>
+        </table>
+        <table name="item_tags">
+            <column name="id">13</column>
+            <column name="tagName">Side Mirror</column>
+        </table>
+        <table name="item_tags">
+            <column name="id">14</column>
+            <column name="tagName">Motor Wheel</column>
+        </table>
+        <table name="item_tags">
+            <column name="id">15</column>
+            <column name="tagName">Truck Wheel</column>
+        </table>
+        <table name="item_tags">
+            <column name="id">16</column>
+            <column name="tagName">steering Wheel </column>
+        </table>
+        <table name="item_tags">
+            <column name="id">17</column>
+            <column name="tagName">Computer Mouse</column>
+        </table>
+        <table name="item_tags">
+            <column name="id">18</column>
+            <column name="tagName">Classic Keyboard</column>
+        </table>
+        <table name="item_tags">
+            <column name="id">19</column>
+            <column name="tagName">Mouse Pad</column>
+        </table>
+        <table name="item_tags">
+            <column name="id">20</column>
+            <column name="tagName">Center Bolt</column>
+        </table>
+        <table name="item_tags">
+            <column name="id">21</column>
+            <column name="tagName">Radiator</column>
+        </table>
+        <table name="item_tags">
+            <column name="id">22</column>
+            <column name="tagName">Drum Bolt</column>
+        </table>
+        <table name="item_tags">
+            <column name="id">23</column>
+            <column name="tagName">Propeller</column>
+        </table>
+        <table name="item_tags">
+            <column name="id">24</column>
+            <column name="tagName">Break Drum</column>
+        </table>
+        <table name="item_tags">
+            <column name="id">25</column>
+            <column name="tagName">Computer Monitor</column>
+        </table>
+        <table name="item_tags">
+            <column name="id">26</column>
+            <column name="tagName">Ignition</column>
+        </table>
+        <table name="item_tags">
+            <column name="id">27</column>
+            <column name="tagName">Blowing Horn</column>
+        </table>
+        <table name="item_tags">
+            <column name="id">28</column>
+            <column name="tagName">M.2</column>
+        </table>
+        <table name="item_tags">
+            <column name="id">29</column>
+            <column name="tagName">CD ROM</column>
+        </table>
+        <table name="item_tags">
+            <column name="id">30</column>
+            <column name="tagName">SSD</column>
+        </table>
+        <table name="item_tags">
+            <column name="id">31</column>
+            <column name="tagName">Cellphone Screen</column>
+        </table>
+        <table name="item_tags">
+            <column name="id">32</column>
+            <column name="tagName">Tempered Glass</column>
+        </table>
+        <table name="item_tags">
+            <column name="id">33</column>
+            <column name="tagName">Cellphone Charger</column>
+        </table>
+        <table name="item_tags">
+            <column name="id">34</column>
+            <column name="tagName">Vehicle Battery</column>
+        </table>
+        <table name="item_tags">
+            <column name="id">35</column>
+            <column name="tagName">Cellphone Battery</column>
+        </table>
+        <table name="item_tags">
+            <column name="id">36</column>
+            <column name="tagName">Cellphone Board</column>
+        </table>
+        <!-- Table messagetype -->
+        <table name="messagetype">
+            <column name="id">1</column>
+            <column name="messageType">Text</column>
+        </table>
+        <table name="messagetype">
+            <column name="id">2</column>
+            <column name="messageType">Picture</column>
+        </table>
+        <table name="messagetype">
+            <column name="id">3</column>
+            <column name="messageType">Video</column>
+        </table>
+        <table name="messagetype">
+            <column name="id">4</column>
+            <column name="messageType">File</column>
+        </table>
+        <!-- Table notificationtype -->
+        <table name="notificationtype">
+            <column name="id">1</column>
+            <column name="notificationType">Bid Chat</column>
+        </table>
+        <table name="notificationtype">
+            <column name="id">2</column>
+            <column name="notificationType">New Store</column>
+        </table>
+        <table name="notificationtype">
+            <column name="id">3</column>
+            <column name="notificationType">Item Reservation</column>
+        </table>
+        <table name="notificationtype">
+            <column name="id">4</column>
+            <column name="notificationType">Item Request</column>
+        </table>
+        <table name="notificationtype">
+            <column name="id">5</column>
+            <column name="notificationType">Admin</column>
+        </table>
+        <!-- Table order -->
+        <!-- Table order_list -->
+        <!-- Table spacekraft_user -->
+        <table name="spacekraft_user">
+            <column name="id">1</column>
+            <column name="username">ianrey258</column>
+            <column name="password">123456</column>
+            <column name="hiLevel">0</column>
+            <column name="hiScore">826</column>
+            <column name="coins">118</column>
+        </table>
+        <table name="spacekraft_user">
+            <column name="id">6</column>
+            <column name="username">nikkian</column>
+            <column name="password">123456</column>
+            <column name="hiLevel">3</column>
+            <column name="hiScore">584</column>
+            <column name="coins">107</column>
+        </table>
+        <!-- Table statustype -->
+        <table name="statustype">
+            <column name="id">1</column>
+            <column name="statusName">Active</column>
+        </table>
+        <table name="statustype">
+            <column name="id">2</column>
+            <column name="statusName">Inactive</column>
+        </table>
+        <table name="statustype">
+            <column name="id">3</column>
+            <column name="statusName">Banned</column>
+        </table>
+        <table name="statustype">
+            <column name="id">4</column>
+            <column name="statusName">Closed</column>
+        </table>
+        <table name="statustype">
+            <column name="id">5</column>
+            <column name="statusName">Open</column>
+        </table>
+        <table name="statustype">
+            <column name="id">6</column>
+            <column name="statusName">Pending</column>
+        </table>
+        <table name="statustype">
+            <column name="id">7</column>
+            <column name="statusName">Received</column>
+        </table>
+        <table name="statustype">
+            <column name="id">8</column>
+            <column name="statusName">Sending</column>
+        </table>
+        <table name="statustype">
+            <column name="id">9</column>
+            <column name="statusName">Read</column>
+        </table>
+        <table name="statustype">
+            <column name="id">10</column>
+            <column name="statusName">Unread</column>
+        </table>
+        <table name="statustype">
+            <column name="id">11</column>
+            <column name="statusName">Abort</column>
+        </table>
+        <table name="statustype">
+            <column name="id">12</column>
+            <column name="statusName">Waiting</column>
+        </table>
+        <table name="statustype">
+            <column name="id">13</column>
+            <column name="statusName">Verify</column>
+        </table>
+        <table name="statustype">
+            <column name="id">14</column>
+            <column name="statusName">Reverify</column>
+        </table>
+        <table name="statustype">
+            <column name="id">15</column>
+            <column name="statusName">Verifying</column>
+        </table>
+        <table name="statustype">
+            <column name="id">16</column>
+            <column name="statusName">Accept</column>
+        </table>
+        <table name="statustype">
+            <column name="id">17</column>
+            <column name="statusName">Decline</column>
+        </table>
+        <table name="statustype">
+            <column name="id">18</column>
+            <column name="statusName">Delete</column>
+        </table>
+        <!-- Table store -->
+        <table name="store">
+            <column name="id">37</column>
+            <column name="accountId">6</column>
+            <column name="storeName">Ira Pyesa hanap</column>
+            <column name="storeInfo">wala lang basta lang</column>
+            <column name="storeAddress">kauswagan bongbongon</column>
+            <column name="storeRating">0</column>
+            <column name="storeFollowers">0</column>
+            <column name="storeVisited">0</column>
+            <column name="storeStatus">1</column>
+        </table>
+        <table name="store">
+            <column name="id">51</column>
+            <column name="accountId">7</column>
+            <column name="storeName">jsjsj</column>
+            <column name="storeInfo">jsjsj</column>
+            <column name="storeAddress">jsjsj</column>
+            <column name="storeRating">0</column>
+            <column name="storeFollowers">0</column>
+            <column name="storeVisited">0</column>
+            <column name="storeStatus">14</column>
+        </table>
+        <table name="store">
+            <column name="id">52</column>
+            <column name="accountId">28</column>
+            <column name="storeName">Crack Gadget shop</column>
+            <column name="storeInfo">All Brand of Damage Phones</column>
+            <column name="storeAddress">Kuaswagan. Sta Theressa st.</column>
+            <column name="storeRating">0</column>
+            <column name="storeFollowers">0</column>
+            <column name="storeVisited">0</column>
+            <column name="storeStatus">1</column>
+        </table>
+        <!-- Table storefollowers -->
+        <!-- Table storeitem -->
+        <table name="storeitem">
+            <column name="storeId">37</column>
+            <column name="itemId">1</column>
+        </table>
+        <table name="storeitem">
+            <column name="storeId">52</column>
+            <column name="itemId">4</column>
+        </table>
+        <table name="storeitem">
+            <column name="storeId">52</column>
+            <column name="itemId">5</column>
+        </table>
+        <!-- Table store_chat_area -->
+        <!-- Table store_img -->
+        <table name="store_img">
+            <column name="id">58</column>
+            <column name="parentId">37</column>
+            <column name="filename">7583117_FB_IMG_1567424090399.jpg</column>
+        </table>
+        <table name="store_img">
+            <column name="id">59</column>
+            <column name="parentId">37</column>
+            <column name="filename">6861960_FB_IMG_1567424104552.jpg</column>
+        </table>
+        <table name="store_img">
+            <column name="id">60</column>
+            <column name="parentId">52</column>
+            <column name="filename">5618476_image_picker2907719304816316400jpg</column>
+        </table>
+        <table name="store_img">
+            <column name="id">61</column>
+            <column name="parentId">52</column>
+            <column name="filename">3661031_image_picker846583868504671173jpg</column>
+        </table>
+        <table name="store_img">
+            <column name="id">62</column>
+            <column name="parentId">52</column>
+            <column name="filename">4537621_image_picker5503503791708227255jpg</column>
+        </table>
+        <!-- Table store_rating -->
+        <!-- Table store_veriification_img -->
+        <table name="store_veriification_img">
+            <column name="id">18</column>
+            <column name="parentId">52</column>
+            <column name="filename">241008_image_picker1817258858295805527jpg</column>
+        </table>
+        <table name="store_veriification_img">
+            <column name="id">32</column>
+            <column name="parentId">52</column>
+            <column name="filename">241008_image_picker1817258858295805527jpg</column>
+        </table>
+        <table name="store_veriification_img">
+            <column name="id">33</column>
+            <column name="parentId">52</column>
+            <column name="filename">241008_image_picker1817258858295805527jpg</column>
+        </table>
+        <table name="store_veriification_img">
+            <column name="id">34</column>
+            <column name="parentId">37</column>
+            <column name="filename">null</column>
+        </table>
+        <table name="store_veriification_img">
+            <column name="id">35</column>
+            <column name="parentId">51</column>
+            <column name="filename">null</column>
+        </table>
+        <table name="store_veriification_img">
+            <column name="id">36</column>
+            <column name="parentId">52</column>
+            <column name="filename">null</column>
+        </table>
+        <!-- Table tax_percentage -->
+        <table name="tax_percentage">
+            <column name="id">1</column>
+            <column name="taxPercentage">5</column>
+            <column name="effectivityDate">2015-12-10</column>
+        </table>
+        <!-- Table topup_percentage -->
+        <table name="topup_percentage">
+            <column name="id">1</column>
+            <column name="topupPercentage">2</column>
+            <column name="effectivityDate">2020-03-01</column>
+        </table>
+        <!-- Table user -->
+        <table name="user">
+            <column name="id">7</column>
+            <column name="username">ianreyqaz</column>
+            <column name="password">123456</column>
+            <column name="userType">User</column>
+        </table>
+        <table name="user">
+            <column name="id">8</column>
+            <column name="username">Admin</column>
+            <column name="password">admin</column>
+            <column name="userType">User</column>
+        </table>
+        <table name="user">
+            <column name="id">11</column>
+            <column name="username">SampleData</column>
+            <column name="password">SampleData</column>
+            <column name="userType">User</column>
+        </table>
+        <table name="user">
+            <column name="id">12</column>
+            <column name="username">Demo</column>
+            <column name="password">demo</column>
+            <column name="userType">User</column>
+        </table>
+        <table name="user">
+            <column name="id">13</column>
+            <column name="username">User1</column>
+            <column name="password">123456</column>
+            <column name="userType">User</column>
+        </table>
+        <table name="user">
+            <column name="id">14</column>
+            <column name="username">User2</column>
+            <column name="password">123456</column>
+            <column name="userType">User</column>
+        </table>
+        <!-- Table user_account -->
+        <table name="user_account">
+            <column name="id">6</column>
+            <column name="userId">7</column>
+            <column name="firstname">Ianrey</column>
+            <column name="lastname">Acampado</column>
+            <column name="contactNo">9752662481</column>
+            <column name="gender">Male</column>
+            <column name="email">ianreyinfinity@gmail.com</column>
+            <column name="zipCode">9000</column>
+            <column name="accountStatus">1</column>
+        </table>
+        <table name="user_account">
+            <column name="id">7</column>
+            <column name="userId">8</column>
+            <column name="firstname">Beta </column>
+            <column name="lastname">Test</column>
+            <column name="contactNo">8888</column>
+            <column name="gender">Female</column>
+            <column name="email">secret</column>
+            <column name="zipCode">0</column>
+            <column name="accountStatus">1</column>
+        </table>
+        <table name="user_account">
+            <column name="id">26</column>
+            <column name="userId">11</column>
+            <column name="firstname">Ianrey</column>
+            <column name="lastname">Acampado</column>
+            <column name="contactNo">9752662481</column>
+            <column name="gender">male</column>
+            <column name="email">email@gmail</column>
+            <column name="zipCode">9000</column>
+            <column name="accountStatus">1</column>
+        </table>
+        <table name="user_account">
+            <column name="id">27</column>
+            <column name="userId">12</column>
+            <column name="firstname">Beta</column>
+            <column name="lastname">Testing</column>
+            <column name="contactNo">9752662481</column>
+            <column name="gender">Male</column>
+            <column name="email">mai.com</column>
+            <column name="zipCode">9000</column>
+            <column name="accountStatus">1</column>
+        </table>
+        <table name="user_account">
+            <column name="id">28</column>
+            <column name="userId">13</column>
+            <column name="firstname">User1</column>
+            <column name="lastname">User1demo</column>
+            <column name="contactNo">9752662481</column>
+            <column name="gender">Male</column>
+            <column name="email">ianrey@gmail.com</column>
+            <column name="zipCode">9000</column>
+            <column name="accountStatus">1</column>
+        </table>
+        <table name="user_account">
+            <column name="id">29</column>
+            <column name="userId">14</column>
+            <column name="firstname">User2</column>
+            <column name="lastname">Demo</column>
+            <column name="contactNo">9359002344</column>
+            <column name="gender">Male</column>
+            <column name="email">user2@gmail.com</column>
+            <column name="zipCode">0</column>
+            <column name="accountStatus">1</column>
+        </table>
+        <!-- Table user_img -->
+        <table name="user_img">
+            <column name="id">2</column>
+            <column name="parentId">6</column>
+            <column name="filename">123321_IMG_20180521_093119.jpg</column>
+        </table>
+        <table name="user_img">
+            <column name="id">3</column>
+            <column name="parentId">7</column>
+            <column name="filename">238247_2357d312-0096-44f0-b929-749ec0bc8a0e-1165095321</column>
+        </table>
+        <table name="user_img">
+            <column name="id">22</column>
+            <column name="parentId">26</column>
+            <column name="filename">555555_IMG_20180521_093119.jpg</column>
+        </table>
+        <table name="user_img">
+            <column name="id">23</column>
+            <column name="parentId">27</column>
+            <column name="filename">666666_IMG_20180521_093119.jpg</column>
+        </table>
+        <table name="user_img">
+            <column name="id">24</column>
+            <column name="parentId">28</column>
+            <column name="filename">583488_image_picker342058442961718523jpg</column>
+        </table>
+        <table name="user_img">
+            <column name="id">25</column>
+            <column name="parentId">29</column>
+            <column name="filename">null</column>
+        </table>
+        <table name="user_img">
+            <column name="id">26</column>
+            <column name="parentId">6</column>
+            <column name="filename">null</column>
+        </table>
+        <table name="user_img">
+            <column name="id">27</column>
+            <column name="parentId">7</column>
+            <column name="filename">null</column>
+        </table>
+        <table name="user_img">
+            <column name="id">28</column>
+            <column name="parentId">26</column>
+            <column name="filename">null</column>
+        </table>
+        <table name="user_img">
+            <column name="id">29</column>
+            <column name="parentId">27</column>
+            <column name="filename">null</column>
+        </table>
+        <table name="user_img">
+            <column name="id">30</column>
+            <column name="parentId">28</column>
+            <column name="filename">null</column>
+        </table>
+        <table name="user_img">
+            <column name="id">31</column>
+            <column name="parentId">29</column>
+            <column name="filename">null</column>
+        </table>
+        <!-- Table user_notification -->
+        <table name="user_notification">
+            <column name="id">4</column>
+            <column name="userId">6</column>
+            <column name="message">Congrastulations! you can now Sell your Scap Things Using this App.</column>
+            <column name="dateRecieved">2020-02-07 00:00:00</column>
+            <column name="notificationType">2</column>
+            <column name="status">9</column>
+        </table>
+        <table name="user_notification">
+            <column name="id">25</column>
+            <column name="userId">7</column>
+            <column name="message">Sorry you cant manage your store yet due to your verification Image. Please check your Email Thank you!</column>
+            <column name="dateRecieved">2020-03-12 00:00:00</column>
+            <column name="notificationType">2</column>
+            <column name="status">10</column>
+        </table>
+        <table name="user_notification">
+            <column name="id">32</column>
+            <column name="userId">7</column>
+            <column name="message">this is admin men</column>
+            <column name="dateRecieved">2019-08-08 00:00:00</column>
+            <column name="notificationType">1</column>
+            <column name="status">9</column>
+        </table>
+        <table name="user_notification">
+            <column name="id">45</column>
+            <column name="userId">26</column>
+            <column name="message">Hey Somebody is looking for iahrud on your Location with a Budget of P600</column>
+            <column name="dateRecieved">2020-06-23 00:00:00</column>
+            <column name="notificationType">4</column>
+            <column name="status">9</column>
+        </table>
+        <table name="user_notification">
+            <column name="id">46</column>
+            <column name="userId">26</column>
+            <column name="message">Hey Somebody is looking for ianudud on your Location with a Budget of P600</column>
+            <column name="dateRecieved">2020-06-23 00:00:00</column>
+            <column name="notificationType">4</column>
+            <column name="status">10</column>
+        </table>
+        <table name="user_notification">
+            <column name="id">47</column>
+            <column name="userId">26</column>
+            <column name="message">Hey Somebody is looking for short on your Location with a Budget of P100</column>
+            <column name="dateRecieved">2020-06-23 00:00:00</column>
+            <column name="notificationType">4</column>
+            <column name="status">10</column>
+        </table>
+        <table name="user_notification">
+            <column name="id">48</column>
+            <column name="userId">26</column>
+            <column name="message">Hey Somebody is looking for laptop on your Location with a Budget of P2500</column>
+            <column name="dateRecieved">2020-06-25 00:00:00</column>
+            <column name="notificationType">4</column>
+            <column name="status">10</column>
+        </table>
+        <table name="user_notification">
+            <column name="id">49</column>
+            <column name="userId">7</column>
+            <column name="message">Sorry you cant manage your store yet due to your verification Image. Please check your Email Thank you!</column>
+            <column name="dateRecieved">2020-06-26 00:00:00</column>
+            <column name="notificationType">2</column>
+            <column name="status">10</column>
+        </table>
+        <table name="user_notification">
+            <column name="id">50</column>
+            <column name="userId">28</column>
+            <column name="message">Sorry you cant manage your store yet due to your verification Image. Please check your Email Thank you!</column>
+            <column name="dateRecieved">2020-06-29 00:00:00</column>
+            <column name="notificationType">2</column>
+            <column name="status">10</column>
+        </table>
+        <table name="user_notification">
+            <column name="id">51</column>
+            <column name="userId">28</column>
+            <column name="message">Congratulations! you can now Sell your Scap Things Using this App.</column>
+            <column name="dateRecieved">2020-06-29 00:00:00</column>
+            <column name="notificationType">2</column>
+            <column name="status">9</column>
+        </table>
+        <table name="user_notification">
+            <column name="id">52</column>
+            <column name="userId">6</column>
+            <column name="message">Hey Somebody is looking for Video Card ddr2 on your Location with a Budget of P1500</column>
+            <column name="dateRecieved">2020-06-30 00:00:00</column>
+            <column name="notificationType">4</column>
+            <column name="status">10</column>
+        </table>
+        <table name="user_notification">
+            <column name="id">53</column>
+            <column name="userId">26</column>
+            <column name="message">Hey Somebody is looking for Video Card ddr2 on your Location with a Budget of P1500</column>
+            <column name="dateRecieved">2020-06-30 00:00:00</column>
+            <column name="notificationType">4</column>
+            <column name="status">10</column>
+        </table>
+        <table name="user_notification">
+            <column name="id">54</column>
+            <column name="userId">28</column>
+            <column name="message">Hey Somebody is looking for Video Card ddr2 on your Location with a Budget of P1500</column>
+            <column name="dateRecieved">2020-06-30 00:00:00</column>
+            <column name="notificationType">4</column>
+            <column name="status">9</column>
+        </table>
+        <table name="user_notification">
+            <column name="id">55</column>
+            <column name="userId">27</column>
+            <column name="message">Hey Somebody is looking for Video Card ddr2 on your Location with a Budget of P1500</column>
+            <column name="dateRecieved">2020-06-30 00:00:00</column>
+            <column name="notificationType">4</column>
+            <column name="status">10</column>
+        </table>
+        <!-- Table user_reports -->
+        <!-- Table zip_code -->
+        <table name="zip_code">
+            <column name="id">0</column>
+            <column name="location">None</column>
+        </table>
+        <table name="zip_code">
+            <column name="id">9000</column>
+            <column name="location">Cagayan de Oro City</column>
+        </table>
+        <table name="zip_code">
+            <column name="id">9001</column>
+            <column name="location">Tagoloan</column>
+        </table>
+        <table name="zip_code">
+            <column name="id">9002</column>
+            <column name="location">Villanueva</column>
+        </table>
+        <table name="zip_code">
+            <column name="id">9003</column>
+            <column name="location">Jasaan</column>
+        </table>
+        <table name="zip_code">
+            <column name="id">9004</column>
+            <column name="location">Claveria</column>
+        </table>
+        <table name="zip_code">
+            <column name="id">9005</column>
+            <column name="location">Balingasag</column>
+        </table>
+        <table name="zip_code">
+            <column name="id">9006</column>
+            <column name="location">Lagonglong</column>
+        </table>
+        <table name="zip_code">
+            <column name="id">9007</column>
+            <column name="location">Salay</column>
+        </table>
+        <table name="zip_code">
+            <column name="id">9008</column>
+            <column name="location">Binuangan</column>
+        </table>
+        <table name="zip_code">
+            <column name="id">9009</column>
+            <column name="location">Sugbongcogon</column>
+        </table>
+        <table name="zip_code">
+            <column name="id">9010</column>
+            <column name="location">Kinogitan</column>
+        </table>
+        <table name="zip_code">
+            <column name="id">9011</column>
+            <column name="location">Balinguan</column>
+        </table>
+        <table name="zip_code">
+            <column name="id">9012</column>
+            <column name="location">Talisayan</column>
+        </table>
+        <table name="zip_code">
+            <column name="id">9013</column>
+            <column name="location">Medina</column>
+        </table>
+        <table name="zip_code">
+            <column name="id">9014</column>
+            <column name="location">Gingoog City</column>
+        </table>
+        <table name="zip_code">
+            <column name="id">9015</column>
+            <column name="location">Magsaysay</column>
+        </table>
+        <table name="zip_code">
+            <column name="id">9016</column>
+            <column name="location">Opol</column>
+        </table>
+        <table name="zip_code">
+            <column name="id">9017</column>
+            <column name="location">El Salvador</column>
+        </table>
+        <table name="zip_code">
+            <column name="id">9018</column>
+            <column name="location">Alubijid</column>
+        </table>
+        <table name="zip_code">
+            <column name="id">9019</column>
+            <column name="location">Laguindingan</column>
+        </table>
+        <table name="zip_code">
+            <column name="id">9020</column>
+            <column name="location">Gitagum</column>
+        </table>
+        <table name="zip_code">
+            <column name="id">9021</column>
+            <column name="location">Libertad</column>
+        </table>
+        <table name="zip_code">
+            <column name="id">9022</column>
+            <column name="location">Initao</column>
+        </table>
+        <table name="zip_code">
+            <column name="id">9023</column>
+            <column name="location">Naawan</column>
+        </table>
+        <table name="zip_code">
+            <column name="id">9024</column>
+            <column name="location">Manticao</column>
+        </table>
+        <table name="zip_code">
+            <column name="id">9025</column>
+            <column name="location">Lugait</column>
+        </table>
+    </database>
+</pma_xml_export>
